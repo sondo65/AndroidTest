@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
+
 import sondo65.com.androidtest.R;
 import sondo65.com.androidtest.models.City;
 import sondo65.com.androidtest.utils.SharedPreferencesUtils;
@@ -21,7 +23,7 @@ public class InsertDataActivity extends AppCompatActivity {
 
     //ui components
     Button btnInsertData;
-    private ProgressBar mProgressBar1;
+    private NumberProgressBar mProgressBar1;
 
     //var
     private InsertDataViewModel mInsertDataViewModel;
@@ -38,14 +40,16 @@ public class InsertDataActivity extends AppCompatActivity {
 
         mShouldInsertFakeData = SharedPreferencesUtils.getShouldInsert(SharedPreferencesUtils.SHOULD_INSERT,true);
 
-        if(!mShouldInsertFakeData)
+        if(!mShouldInsertFakeData){
             moveToListActivity();
+        }
 
         mInsertDataViewModel = new ViewModelProvider(this).get(InsertDataViewModel.class);
 
         btnInsertData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                btnInsertData.setEnabled(false);
                 insertFakeCities();
             }
         });
@@ -63,11 +67,9 @@ public class InsertDataActivity extends AppCompatActivity {
     }
 
     private void insertFakeCities(){
-
         mInsertDataViewModel.insertCityTask(this,mProgressBar1);
-
-        //Make mShouldInsertFakeData = false to prevent insert fake data again when relaunch app
-        SharedPreferencesUtils.setShouldInsert(SharedPreferencesUtils.SHOULD_INSERT,false);
+        mShouldInsertFakeData = false;
+        SharedPreferencesUtils.setShouldInsert(SharedPreferencesUtils.SHOULD_INSERT,mShouldInsertFakeData);
     }
 
 }

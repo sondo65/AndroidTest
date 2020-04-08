@@ -15,11 +15,10 @@ import java.util.List;
 import sondo65.com.androidtest.models.City;
 import sondo65.com.androidtest.persistence.CityDao;
 import sondo65.com.androidtest.repositories.CityRepository;
-import sondo65.com.androidtest.utils.SharedPreferencesUtils;
 
 import static sondo65.com.androidtest.utils.Constants.LOAD_MORE_ITEM;
 
-public class CityListActivityViewModel extends AndroidViewModel {
+public class CityListViewModel extends AndroidViewModel {
 
     private CityRepository mRepo;
 
@@ -29,7 +28,7 @@ public class CityListActivityViewModel extends AndroidViewModel {
         return mListCity;
     }
 
-    public CityListActivityViewModel(@NonNull Application application) {
+    public CityListViewModel(@NonNull Application application) {
         super(application);
 
         init(application);

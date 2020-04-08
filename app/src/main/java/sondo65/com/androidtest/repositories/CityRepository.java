@@ -6,6 +6,8 @@ import android.widget.ProgressBar;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class CityRepository {
         cityDao = CityDatabase.getInstance(context).getCityDao();
     }
 
-    public void insertCityTask(Context context, ProgressBar progressBar){
+    public void insertCityTask(Context context, NumberProgressBar progressBar){
         new InsertAsyncTask(cityDao,context,progressBar).execute();
     }
 

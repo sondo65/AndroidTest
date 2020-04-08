@@ -1,22 +1,15 @@
 package sondo65.com.androidtest.adapters;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.ListPreloader;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.util.ViewPreloadSizeProvider;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import sondo65.com.androidtest.R;
