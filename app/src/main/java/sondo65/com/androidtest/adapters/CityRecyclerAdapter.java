@@ -22,18 +22,14 @@ import java.util.List;
 import sondo65.com.androidtest.R;
 import sondo65.com.androidtest.models.City;
 
-public class CityRecyclerAdapter extends RecyclerView.Adapter<CityRecyclerAdapter.CityViewHolder> implements
-        ListPreloader.PreloadModelProvider<String> {
+public class CityRecyclerAdapter extends RecyclerView.Adapter<CityRecyclerAdapter.CityViewHolder>{
 
     private List<City> mListCity = new ArrayList<>();
-    private ViewPreloadSizeProvider<String> preloadSizeProvider;
 
-    public CityRecyclerAdapter(ViewPreloadSizeProvider<String> viewPreloadSizeProvider){
-        this.preloadSizeProvider = viewPreloadSizeProvider;
+    public CityRecyclerAdapter(){
     }
 
-    public void replaceData(List<City> data) {
-        mListCity.clear();
+    public void addData(List<City> data) {
         mListCity.addAll(data);
         notifyDataSetChanged();
     }
@@ -58,22 +54,6 @@ public class CityRecyclerAdapter extends RecyclerView.Adapter<CityRecyclerAdapte
         if(mListCity != null)
             return mListCity.size();
         return 0;
-    }
-
-    @NonNull
-    @Override
-    public List<String> getPreloadItems(int position) {
-        String name = mListCity.get(position).getName();
-        if(TextUtils.isEmpty(name)){
-            return Collections.emptyList();
-        }
-        return Collections.singletonList(name);
-    }
-
-    @Nullable
-    @Override
-    public RequestBuilder<?> getPreloadRequestBuilder(@NonNull String item) {
-        return null;
     }
 
     public class CityViewHolder extends RecyclerView.ViewHolder{

@@ -25,16 +25,16 @@ public class CityRepository {
         return instance;
     }
 
+    public CityDao getCityDao(){
+        return cityDao;
+    }
+
     private CityRepository(Context context) {
         cityDao = CityDatabase.getInstance(context).getCityDao();
     }
 
-    public void insertCityTask(City city){
-        new InsertAsyncTask(cityDao).execute(city);
-    }
-
-    public LiveData<List<City>> retrieveCitiesTask() {
-        return cityDao.getCities();
+    public void insertCityTask(City city,Context context){
+        new InsertAsyncTask(cityDao,context).execute(city);
     }
 
 }

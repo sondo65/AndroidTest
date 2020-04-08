@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.AbsListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -28,6 +32,7 @@ import sondo65.com.androidtest.utils.SimpleDividerItemDecoration;
 import sondo65.com.androidtest.viewmodels.CityListActivityViewModel;
 
 import static sondo65.com.androidtest.utils.Constants.DEFINED_ROW;
+import static sondo65.com.androidtest.utils.Constants.LOAD_MORE_ITEM;
 
 public class CityListActivity extends AppCompatActivity {
 
@@ -35,10 +40,13 @@ public class CityListActivity extends AppCompatActivity {
 
     //ui components
     private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
 
     //var
     private CityRecyclerAdapter mCityRecyclerAdapter;
     private CityListActivityViewModel mCityListActivityViewModel;
+    private LinearLayoutManager mLinearLayoutManager;
+    private int mCurrentItems, mTotalItems, mScrollOutItems;
     private Boolean mShouldInsertFakeData;
 
     @Override
@@ -46,81 +54,74 @@ public class CityListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cities_list);
 
-        SharedPreferencesUtils.init(getApplicationContext());
-
-        mRecyclerView = findViewById(R.id.recycler_view);
+        findViewById();
 
         mCityListActivityViewModel = new ViewModelProvider(this).get(CityListActivityViewModel.class);
 
-        mCityListActivityViewModel.init(CityListActivity.this.getApplication());
-
-        mShouldInsertFakeData = SharedPreferencesUtils.getShouldInsert(SharedPreferencesUtils.SHOULD_INSERT,true);
-
-        if(mShouldInsertFakeData){
-            insertFakeCities();
-        }
-
-        retrieveCities();
+        observeDataCitiesChanged();
 
         initRecyclerView();
 
     }
 
-    private void initRecyclerView(){
-        ViewPreloadSizeProvider<String> viewPreloader = new ViewPreloadSizeProvider<>();
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
+    private void findViewById(){
+        mRecyclerView = findViewById(R.id.recycler_view);
+        mProgressBar = findViewById(R.id.progress_bar);
+    }
+
+    private void initRecyclerView() {
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
         mRecyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
-        mCityRecyclerAdapter = new CityRecyclerAdapter(viewPreloader);
-
-        RecyclerViewPreloader<String> preloader = new RecyclerViewPreloader<String>(
-                Glide.with(this),
-                mCityRecyclerAdapter,
-                viewPreloader,
-                30);
-
-        mRecyclerView.addOnScrollListener(preloader);
+        mCityRecyclerAdapter = new CityRecyclerAdapter();
+        mRecyclerView.setAdapter(mCityRecyclerAdapter);
 
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            Boolean isScrolling = false;
+
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if(!mRecyclerView.canScrollVertically(1)){
-                    Log.d(TAG, "onScrollStateChanged: Loadmore");
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                    isScrolling = true;
+                }
+            }
+
+            @Override
+            public void onScrolled(@NonNull final RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                mCurrentItems = mLinearLayoutManager.getChildCount();
+                mTotalItems = mLinearLayoutManager.getItemCount();
+                mScrollOutItems = mLinearLayoutManager.findFirstVisibleItemPosition();
+
+                if (isScrolling && (mCurrentItems + mScrollOutItems == mTotalItems)) {
+                    showProgressBar();
+                    isScrolling = false;
+                    mCityListActivityViewModel.fetchData(mTotalItems, LOAD_MORE_ITEM);
                 }
             }
         });
-
-
-        mRecyclerView.setAdapter(mCityRecyclerAdapter);
     }
 
-    private void retrieveCities(){
+
+    private void observeDataCitiesChanged() {
         mCityListActivityViewModel.getListCities().observe(this, new Observer<List<City>>() {
             @Override
-            public void onChanged(@Nullable List<City> cities) {
-                /*if(mListCity.size() > 0){
-                    mListCity.clear();
-                }
-                if(cities != null){
-                    mListCity.addAll(cities);
-                }*/
-                //mCityRecyclerAdapter.notifyDataSetChanged();
-
-                mCityRecyclerAdapter.replaceData(cities);
+            public void onChanged(List<City> cities) {
+                hideProgressBar();
+                mCityRecyclerAdapter.addData(cities);
             }
         });
     }
 
-    private void insertFakeCities(){
-        for(int i = 0; i < DEFINED_ROW; i++){
-            City city = new City();
-            city.setName("City " + i);
-            city.setCountry("Country " + i);
-            city.setPopulation("999,999,999");
-            mCityListActivityViewModel.insertCityTask(city);
-        }
-        //Make mShouldInsertFakeData = false to prevent insert fake data again when relaunch app
-        SharedPreferencesUtils.setShouldInsert(SharedPreferencesUtils.SHOULD_INSERT,false);
+    private void showProgressBar(){
+        mProgressBar.setVisibility(View.VISIBLE);
     }
+
+    private void hideProgressBar(){
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
+
 }

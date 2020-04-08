@@ -19,7 +19,7 @@ public interface CityDao {
     @Insert
     long[] insert(City... cities);
 
-    @Query("SELECT * FROM City")
-    LiveData<List<City>> getCities();
+    @Query("SELECT * FROM City LIMIT :offset,:limit")
+    List<City> getCities(int offset,int limit);
 
 }
