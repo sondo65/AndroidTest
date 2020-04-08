@@ -47,7 +47,6 @@ public class CityListActivity extends AppCompatActivity {
     private CityListActivityViewModel mCityListActivityViewModel;
     private LinearLayoutManager mLinearLayoutManager;
     private int mCurrentItems, mTotalItems, mScrollOutItems;
-    private Boolean mShouldInsertFakeData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

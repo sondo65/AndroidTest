@@ -3,11 +3,11 @@ package sondo65.com.androidtest.ui;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import sondo65.com.androidtest.R;
 import sondo65.com.androidtest.models.City;
@@ -21,6 +21,7 @@ public class InsertDataActivity extends AppCompatActivity {
 
     //ui components
     Button btnInsertData;
+    private ProgressBar mProgressBar1;
 
     //var
     private InsertDataViewModel mInsertDataViewModel;
@@ -33,7 +34,7 @@ public class InsertDataActivity extends AppCompatActivity {
 
         SharedPreferencesUtils.init(getApplicationContext());
 
-        btnInsertData = findViewById(R.id.button_insert);
+        findViewById();
 
         mShouldInsertFakeData = SharedPreferencesUtils.getShouldInsert(SharedPreferencesUtils.SHOULD_INSERT,true);
 
@@ -50,6 +51,11 @@ public class InsertDataActivity extends AppCompatActivity {
         });
     }
 
+    private void findViewById(){
+        btnInsertData = findViewById(R.id.button_insert);
+        mProgressBar1 = findViewById(R.id.progress_bar_1);
+    }
+
     private void moveToListActivity(){
         Intent intent = new Intent(this,CityListActivity.class);
         startActivity(intent);
@@ -57,14 +63,11 @@ public class InsertDataActivity extends AppCompatActivity {
     }
 
     private void insertFakeCities(){
-        for(int i = 0; i < 200; i++){
-            City city = new City();
-            city.setName("City " + i);
-            city.setCountry("Country " + i);
-            city.setPopulation("999,999,999");
-            mInsertDataViewModel.insertCityTask(city,this);
-        }
+
+        mInsertDataViewModel.insertCityTask(this,mProgressBar1);
+
         //Make mShouldInsertFakeData = false to prevent insert fake data again when relaunch app
         SharedPreferencesUtils.setShouldInsert(SharedPreferencesUtils.SHOULD_INSERT,false);
     }
+
 }

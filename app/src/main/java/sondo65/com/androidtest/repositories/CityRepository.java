@@ -1,6 +1,7 @@
 package sondo65.com.androidtest.repositories;
 
 import android.content.Context;
+import android.widget.ProgressBar;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -33,8 +34,8 @@ public class CityRepository {
         cityDao = CityDatabase.getInstance(context).getCityDao();
     }
 
-    public void insertCityTask(City city,Context context){
-        new InsertAsyncTask(cityDao,context).execute(city);
+    public void insertCityTask(Context context, ProgressBar progressBar){
+        new InsertAsyncTask(cityDao,context,progressBar).execute();
     }
 
 }

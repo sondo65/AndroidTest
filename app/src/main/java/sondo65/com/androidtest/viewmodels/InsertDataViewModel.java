@@ -2,6 +2,7 @@ package sondo65.com.androidtest.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -23,7 +24,7 @@ public class InsertDataViewModel extends AndroidViewModel {
         mRepo = CityRepository.getInstance(application);
     }
 
-    public void insertCityTask(City city, Context context){
-        mRepo.insertCityTask(city, context);
+    public void insertCityTask(Context context, ProgressBar progressBar){
+        mRepo.insertCityTask(context,progressBar);
     }
 }
